@@ -20,4 +20,4 @@ echo ${NODIS_PROJECT_VERSION} > ${CURRENT_VERSION_FILENAME}
 
 aws s3 cp ${CURRENT_VERSION_FILENAME} s3://${NODIS_WEBAPP_BUCKET}
 
-
+aws s3api put-object-acl --bucket ${NODIS_WEBAPP_BUCKET} --key ${NODIS_DEPLOY_ENV} --acl public-read
