@@ -10,4 +10,4 @@ tar xzvf ${NODIS_ARTIFACT_FILENAME}
 
 aws s3 sync --delete s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV} s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}-old
 
-aws s3 sync --delete build s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}-new
+aws s3 sync --delete build s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}
