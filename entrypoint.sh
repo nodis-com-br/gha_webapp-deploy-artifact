@@ -12,12 +12,10 @@ aws s3 cp s3://${NODIS_ARTIFACT_BUCKET}/${NODIS_PROJECT_NAME}/${NODIS_ARTIFACT_F
 
 tar xzvf ${NODIS_ARTIFACT_FILENAME}
 
-aws s3 sync --delete s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV} s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}-`cat ${CURRENT_VERSION_FILENAME}`
+aws s3 sync --delete --acl private s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV} s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}-`cat ${CURRENT_VERSION_FILENAME}`
 
-aws s3 sync --delete build s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}
+aws s3 sync --delete --acl public-read build s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}
 
 echo ${NODIS_PROJECT_VERSION} > ${CURRENT_VERSION_FILENAME}
 
 aws s3 cp ${CURRENT_VERSION_FILENAME} s3://${NODIS_WEBAPP_BUCKET}
-
-aws s3api put-object-acl --bucket ${NODIS_WEBAPP_BUCKET} --key ${NODIS_DEPLOY_ENV} --acl public-read
