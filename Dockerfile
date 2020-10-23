@@ -1,6 +1,6 @@
 FROM amazon/aws-cli
 
-RUN yum install -y tar
+RUN yum install -y tar gzip
 
 COPY entrypoint.sh /entrypoint.sh
 
