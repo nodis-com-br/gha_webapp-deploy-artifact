@@ -1,4 +1,4 @@
-FROM docker.io/nodisbr/toolbox
+FROM amazon/aws-cli
 
 COPY entrypoint.sh /entrypoint.sh
 
