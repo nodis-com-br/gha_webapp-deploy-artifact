@@ -1,0 +1,5 @@
+name: 'webapp-deploy-artifact'
+description: ''
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
