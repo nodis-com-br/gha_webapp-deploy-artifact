@@ -4,18 +4,14 @@ set -e
 [[ ${NODIS_DEPLOY_ENV} == "qa" && ${DEPLOY_QA_TO_PROD} != "false" ]] && NODIS_DEPLOY_ENV="prod"
 [[ ${NODIS_DEPLOY_ENV} == "qa" && ${DEPLOY_QA_TO_DEV} == "true" ]] && NODIS_DEPLOY_ENV="dev"
 
-CURRENT_VERSION_FILENAME="current-version-${NODIS_DEPLOY_ENV}"
-
-aws s3 cp s3://${NODIS_WEBAPP_BUCKET}/${CURRENT_VERSION_FILENAME} . || echo "old" > ${CURRENT_VERSION_FILENAME}
+DISTRIBUTION_ID=`aws cloudfront list-distributions --query 'DistributionList.Items[?(Origins.Items[0].Id==`s3-'${NODIS_WEBAPP_BUCKET}'`)&&(Origins.Items[0].OriginPath==`/'${NODIS_DEPLOY_ENV}'`)].Id' --output text`
 
 aws s3 cp s3://${NODIS_ARTIFACT_BUCKET}/${NODIS_PROJECT_NAME}/${NODIS_ARTIFACT_FILENAME} .
 
 tar xzvf ${NODIS_ARTIFACT_FILENAME}
 
-aws s3 sync --delete --acl private s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV} s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}-`cat ${CURRENT_VERSION_FILENAME}`
+aws s3 sync --delete --acl private build s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}-${NODIS_PROJECT_VERSION}
 
-aws s3 sync --delete --acl public-read build s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}
+aws s3 sync --delete --acl public-read s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}-${NODIS_PROJECT_VERSION} s3://${NODIS_WEBAPP_BUCKET}/${NODIS_DEPLOY_ENV}
 
-echo ${NODIS_PROJECT_VERSION} > ${CURRENT_VERSION_FILENAME}
-
-aws s3 cp ${CURRENT_VERSION_FILENAME} s3://${NODIS_WEBAPP_BUCKET}
+aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths "/*"
